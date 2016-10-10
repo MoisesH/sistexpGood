@@ -670,5 +670,77 @@ namespace Sistema_Experto1._0
                 Patras.llenarListBox();
                 Patras.Show();
         }
+
+        private void BTNnormalizar_Click(object sender, EventArgs e)
+        {
+            string sistemaNormalizado = "";
+            StringBuilder sistemaNor = new StringBuilder();
+            for (int i = 0; i < listRules.Count(); i++)
+            {
+                sistemaNor.Append("(" + normalizarRegla(listRules[i]) + ")");
+                sistemaNor.Append(i <= listRules.Count() - 2 ? "^":"");
+            }
+            MessageBox.Show(sistemaNor.ToString());
+
+        }
+
+        private string normalizarRegla(Regla reglax)
+        {
+            #region Inicializa Valores e Imprime
+            //Inicializa Valor de Conclusion y su Signo
+            int conclusionINT = Convert.ToInt16(reglax.Conclusion);
+            int negadoINT = Convert.ToInt16(reglax.Negado);
+            //Inicializa Valores de Regla y el Signo de cada atomo
+            string[] reglaSTG = reglax.Reglax.Split('^');
+            List<int> reglaINT= new List<int>();
+            foreach (string x in reglaSTG) { reglaINT.Add(Convert.ToInt16(x)); }
+            string[] negadosSTG = reglax.Negados.Split(',');
+            List<int> negadosINT = new List<int>();
+            foreach (string x in negadosSTG) { negadosINT.Add(Convert.ToInt16(x)); }
+
+            int conclusionINTNew = Convert.ToInt16(reglax.Conclusion);
+            int negadoINTNew = Convert.ToInt16(reglax.Negado);
+            //Inicializa Valores de Regla y el Signo de cada atomo
+            List<int> reglaINTNew = new List<int>();
+            List<int> negadosINTNew = new List<int>();
+            //Junta en un String(sb) signos y Atomos
+            StringBuilder toShow = new StringBuilder();
+            StringBuilder reglaOri = new StringBuilder();
+            StringBuilder reglaNor = new StringBuilder();
+            
+            for (int i = 0; i < reglaINT.Count(); i++)
+            {
+                reglaOri.Append(negadosINT[i] == 1 ? "" : "¬");
+                reglaOri.Append(Convert.ToString(reglaINT[i]));
+                reglaOri.Append(i <= reglaINT.Count() - 2 ? "^" : "->");
+            }
+            //Junta en el mismo String(sb) el sigo y la conclusion
+            reglaOri.Append(negadoINT == 1 ? "" : "¬");
+            reglaOri.Append(conclusionINT + "\n");
+
+            for (int i = 0; i < reglaINT.Count(); i++)
+            {
+                reglaINTNew.Add(negadosINT[i] == 1 ? -1 : 1);
+                reglaNor.Append(reglaINTNew[i] == 1 ? "" : "¬");
+                reglaNor.Append(Convert.ToString(reglaINT[i]));
+                reglaNor.Append("v");
+            }
+            reglaNor.Append(negadoINT == 1 ? "" : "¬");
+            reglaNor.Append(conclusionINT);
+
+
+            //Imprime Regla y Conclusion ya con signos
+
+            toShow.Append("Regla: \n");
+            toShow.Append(reglaOri.ToString());
+            toShow.Append("Regla Normalizada: \n");
+            toShow.Append(reglaNor.ToString());
+            MessageBox.Show(toShow.ToString());
+            #endregion
+
+
+            return reglaNor.ToString();
+        }
+
     }
 }

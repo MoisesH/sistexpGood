@@ -52,6 +52,7 @@
             this.BTNresetRULE = new System.Windows.Forms.Button();
             this.BTNEncAdelante = new System.Windows.Forms.Button();
             this.BTNencAtras = new System.Windows.Forms.Button();
+            this.BTNnormalizar = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.DGVatomos)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DGVrules)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DGVreal)).BeginInit();
@@ -270,11 +271,22 @@
             this.BTNencAtras.UseVisualStyleBackColor = true;
             this.BTNencAtras.Click += new System.EventHandler(this.BTNencAtras_Click);
             // 
+            // BTNnormalizar
+            // 
+            this.BTNnormalizar.Location = new System.Drawing.Point(320, 470);
+            this.BTNnormalizar.Name = "BTNnormalizar";
+            this.BTNnormalizar.Size = new System.Drawing.Size(225, 28);
+            this.BTNnormalizar.TabIndex = 11;
+            this.BTNnormalizar.Text = "Normalizar";
+            this.BTNnormalizar.UseVisualStyleBackColor = true;
+            this.BTNnormalizar.Click += new System.EventHandler(this.BTNnormalizar_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1428, 572);
+            this.Controls.Add(this.BTNnormalizar);
             this.Controls.Add(this.BTNencAtras);
             this.Controls.Add(this.BTNEncAdelante);
             this.Controls.Add(this.BTNresetRULE);
@@ -322,6 +334,7 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn OR;
         private System.Windows.Forms.DataGridViewButtonColumn Send;
         private System.Windows.Forms.Button BTNencAtras;
+        private System.Windows.Forms.Button BTNnormalizar;
     }
 }
 
