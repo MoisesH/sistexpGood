@@ -319,9 +319,18 @@ namespace Sistema_Experto1._0
                                 //si es Final manda Algoritmo de explicacion
                                 explicarTerminoFinal(atomoFinal, false);
                                 //Rompe Ciclo
-                                disparado = "";
+
                                 //Sale del Ciclo de Preguntas
-                                terminado = 1;
+                                if (MessageBox.Show("Llegaste a una Conclusion Final \n¿Desea Continuar?",
+                                           "Continuar?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                                {
+                                    terminado = 0;
+                                }
+                                else
+                                {
+                                    disparado = "";
+                                    terminado = 1;
+                                }
                                 break;
                             }
                         }
@@ -376,15 +385,34 @@ namespace Sistema_Experto1._0
                 }
                 else
                 {
-                    buscado = buscarAtomo(Convert.ToInt32(atomoregla));
-                    if (buscarSignoAtomo(Convert.ToInt16(atomoregla), (numRegla - 1)) == -1)
+                    int suma = 0;
+                    int sumax = 0;
+
+                    sumax = listRulesClonNum[numRegla - 1].Reglax.Count();
+                    foreach (int ix in listRulesClonNum[numRegla - 1].Reglax)
                     {
-                        MessageBox.Show("Definiste que:\n\nNo " + buscado);
+                        suma = ix + suma;
                     }
-                    else if (buscarSignoAtomo(Convert.ToInt16(atomoregla), (numRegla - 1)) == 1)
+                    if (sumax != suma)
                     {
-                        MessageBox.Show("Definiste que:\n\n" + buscado);
+                        MessageBox.Show("Tu definiste la Conclusion Intermedia");
+                        reglaAuxiliar.Clear();
                     }
+                    else
+                    {
+                        buscado = buscarAtomo(Convert.ToInt32(atomoregla));
+                        if (buscarSignoAtomo(Convert.ToInt16(atomoregla), (numRegla - 1)) == -1)
+                        {
+                            MessageBox.Show("Definiste que:\n\nNo " + buscado);
+                        }
+                        else if (buscarSignoAtomo(Convert.ToInt16(atomoregla), (numRegla - 1)) == 1)
+                        {
+                            MessageBox.Show("Definiste que:\n\n" + buscado);
+                        }
+                    }
+
+                    
+
                 }
             }
 
