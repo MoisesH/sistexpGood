@@ -20,6 +20,8 @@ namespace Sistema_Experto1._0
         List<Regla> listRules = new List<Regla>();
         List<ReglaClon> listRulesClon = new List<ReglaClon>();
         List<ReglaClonNum> listRulesClonNum = new List<ReglaClonNum>();
+        List<ReglaNorm> listRulesNorm = new List<ReglaNorm>();
+        List<int[]> listaPorPreguntar = new List<int[]>();
 
         public Form1()
         {
@@ -699,55 +701,75 @@ namespace Sistema_Experto1._0
                 Patras.Show();
         }
 
-        private void BTNnormalizar_Click(object sender, EventArgs e)
+        public void BTNnormalizar_Click(object sender, EventArgs e)
         {
-            string sistemaNormalizado = "";
+            
             StringBuilder sistemaNor = new StringBuilder();
             for (int i = 0; i < listRules.Count(); i++)
             {
                 sistemaNor.Append("(" + normalizarRegla(listRules[i]) + ")");
                 sistemaNor.Append(i <= listRules.Count() - 2 ? "^":"");
             }
-            MessageBox.Show(sistemaNor.ToString());
+            //MessageBox.Show(sistemaNor.ToString());
 
+            FormObjetivos Objetivos = new FormObjetivos(listonon,this);
+            Objetivos.llenarListBox();
+            Objetivos.Show();
+            
         }
 
-        private string normalizarRegla(Regla reglax)
+        public string normalizarRegla(Regla reglax)
         {
             #region Inicializa Valores e Imprime
             //Inicializa Valor de Conclusion y su Signo
             int conclusionINT = Convert.ToInt16(reglax.Conclusion);
             int negadoINT = Convert.ToInt16(reglax.Negado);
+
             //Inicializa Valores de Regla y el Signo de cada atomo
             string[] reglaSTG = reglax.Reglax.Split('^');
             List<int> reglaINT= new List<int>();
             foreach (string x in reglaSTG) { reglaINT.Add(Convert.ToInt16(x)); }
+
             string[] negadosSTG = reglax.Negados.Split(',');
             List<int> negadosINT = new List<int>();
             foreach (string x in negadosSTG) { negadosINT.Add(Convert.ToInt16(x)); }
 
             int conclusionINTNew = Convert.ToInt16(reglax.Conclusion);
             int negadoINTNew = Convert.ToInt16(reglax.Negado);
+
             //Inicializa Valores de Regla y el Signo de cada atomo
             List<int> reglaINTNew = new List<int>();
             List<int> negadosINTNew = new List<int>();
+
             //Junta en un String(sb) signos y Atomos
             StringBuilder toShow = new StringBuilder();
             StringBuilder reglaOri = new StringBuilder();
             StringBuilder reglaNor = new StringBuilder();
+            StringBuilder reglaNorNEGToList = new StringBuilder();
+            StringBuilder reglaNorToList = new StringBuilder();
             
             for (int i = 0; i < reglaINT.Count(); i++)
             {
+
                 reglaOri.Append(negadosINT[i] == 1 ? "" : "¬");
+
+
                 reglaOri.Append(Convert.ToString(reglaINT[i]));
                 reglaOri.Append(i <= reglaINT.Count() - 2 ? "^" : "->");
             }
+
+
+            
+
             //Junta en el mismo String(sb) el sigo y la conclusion
             reglaOri.Append(negadoINT == 1 ? "" : "¬");
             reglaOri.Append(conclusionINT + "\n");
 
             for (int i = 0; i < reglaINT.Count(); i++)
             {
+                reglaNorNEGToList.Append(Convert.ToString(negadosINT[i]*-1) + ",");
+                reglaNorToList.Append(Convert.ToString(reglaINT[i])+ "v");
+
                 reglaINTNew.Add(negadosINT[i] == 1 ? -1 : 1);
                 reglaNor.Append(reglaINTNew[i] == 1 ? "" : "¬");
                 reglaNor.Append(Convert.ToString(reglaINT[i]));
@@ -756,6 +778,8 @@ namespace Sistema_Experto1._0
             reglaNor.Append(negadoINT == 1 ? "" : "¬");
             reglaNor.Append(conclusionINT);
 
+            reglaNorNEGToList.Append(Convert.ToString(negadoINT));
+            reglaNorToList.Append(Convert.ToString(conclusionINT));
 
             //Imprime Regla y Conclusion ya con signos
 
@@ -763,12 +787,101 @@ namespace Sistema_Experto1._0
             toShow.Append(reglaOri.ToString());
             toShow.Append("Regla Normalizada: \n");
             toShow.Append(reglaNor.ToString());
-            MessageBox.Show(toShow.ToString());
+            //MessageBox.Show(toShow.ToString());
             #endregion
-
+            listRulesNorm.Add(new ReglaNorm(reglax.IdRegla,reglaNorToList.ToString(), reglaNorNEGToList.ToString()));
 
             return reglaNor.ToString();
         }
+
+        public void algoritmoObjetivos(int atomo)
+        {
+            listaPorPreguntar.Clear();
+            List<int> atomosInRule = new List<int>();
+            List<int> signosInRule = new List<int>();
+            List<int> listaReglasTocadas = new List<int>();
+
+            listaPorPreguntar.Add(new int[] { atomo, 1 });
+            listaPorPreguntar.Add(new int[] { atomo, -1 });
+            int banderaz = 0;
+            int contadorDeReglas = 0;
+            #region[Llenar ListaPorPreguntar]
+            //Ciclar lista por preguntar
+            for (int ex = 0; /*ex < listaPorPreguntar.Count()||*/contadorDeReglas<listRules.Count(); ex++)
+            {
+                //Clicar lista de Reglas
+                foreach(ReglaNorm reglanormalizada in listRulesNorm)
+                {
+                    //Parsea Atomos y signos
+                    atomosInRule = reglanormalizada.Reglax.Split('v').Select(Int32.Parse).ToList();
+                    signosInRule = reglanormalizada.Negados.Split(',').Select(Int32.Parse).ToList();
+                    //Cicla cada atomo y signo en el tamaño de la regla
+                    for (int i = 0; i < atomosInRule.Count(); i++)
+                    {
+                        //Declara Arreglo del atomo ciclado de la regla
+                        int[] Acomparar = new int[] { atomosInRule[i], signosInRule[i] };
+                        //Compara si el Arreglo del atomo es el que se esta revisando en el Ciclo de la lista preguntada
+                        if (Acomparar.SequenceEqual(listaPorPreguntar[ex]))
+                        {
+                            int bandera = 0;
+                            //Si lo encuentra en alguna Regla...
+                            //Cicla en cada atomo y signo en el tamaño de la regla ya definida por la busqueda
+                            //Agregara los atomos y signos que no esten en la lista por preguntar
+                            for(int ix = 0; ix < atomosInRule.Count(); ix++)
+                            {
+                                int[] AAgregar;
+                                //Bandera para determinar que estan o no en la lista
+                                
+                                //Arreglo de atomo-signo que se agregara a la lista con el signo invertido por Declaracion e algoritmo, NO SE INVERTIRA SIGNO si se trata de si mismo
+                                //////////// 
+                                AAgregar = ((atomosInRule[ix] != Acomparar[0]) ? new int[] { atomosInRule[ix], (signosInRule[ix] * -1) } : new int[] { atomosInRule[ix], (signosInRule[ix] * 1) });
+                                
+                                //Cicla en la lista por preguntar para validar que no esten
+                                for (int e = 0; e < listaPorPreguntar.Count(); e++)
+                                {
+                                    //Compara si el arreglo atomo-signo para agregar es el mismo que el que se esta ciclando en la listaporPreguntar
+                                    if (!listaPorPreguntar[e].SequenceEqual(AAgregar))
+                                    {
+                                        //Si no es el mismo se levantara una Bandera para declarar que el arreglo atomo-signo no esta en la Lista
+                                        bandera = 1;
+                                    }
+                                    else
+                                    {
+                                        //Si es el mismo declara la bandera en 0 para definir que no es
+                                        bandera = 0;
+                                        //Rompe el Ciclo
+                                        break;
+                                    }
+                                }
+                                if (bandera == 1)
+                                {
+                                    listaPorPreguntar.Add(AAgregar);
+                                    banderaz++;
+                                    bandera = 0;
+                                }
+                            }
+                        }
+                    }
+                    contadorDeReglas=(banderaz!=0? contadorDeReglas+1:contadorDeReglas);
+                    banderaz = 0;
+                }
+            }
+            #endregion
+            listaPorPreguntar.Reverse();
+            int atomoVALUE = 0;
+            foreach(int[] atomoPregunta in listaPorPreguntar)
+            {
+            StringBuilder Pregunta = new StringBuilder();
+            Pregunta.Append((atomoPregunta[1] == -1) ? "No " : "Si ");
+            Pregunta.Append(buscarAtomo(atomoPregunta[0]));
+            if (MessageBox.Show("¿" + Pregunta.ToString() + "?",
+                                            "Importante Pregunta", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            { atomoVALUE = 1; }
+            else { atomoVALUE = -1; }
+            }
+
+        }
+
 
     }
 }
