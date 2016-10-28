@@ -76,6 +76,7 @@
     <Compile Include="ReglaClon.cs" />
     <Compile Include="ReglaClonNum.cs" />
     <Compile Include="ReglaNorm.cs" />
+    <Compile Include="ReglaNormNum.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

@@ -72,3 +72,4 @@ C:\Users\MoisesHdez\Documents\GitHub\sistexpGood\Sistema Experto1.0\obj\Debug\Si
 C:\Users\MoisesHdez\Documents\GitHub\sistexpGood\Sistema Experto1.0\obj\Debug\Sistema_Experto1._0.Properties.Resources.resources
 C:\Users\MoisesHdez\Documents\GitHub\sistexpGood\Sistema Experto1.0\obj\Debug\Sistema Experto1.0.csproj.GenerateResource.Cache
 C:\Users\moises\Documents\GitHub\sistexpGood\Sistema Experto1.0\obj\Debug\Sistema_Experto1._0.FormObjetivos.resources
+C:\Users\MoisesHdez\Documents\GitHub\sistexpGood\Sistema Experto1.0\obj\Debug\Sistema_Experto1._0.FormObjetivos.resources

@@ -274,10 +274,10 @@ namespace Sistema_Experto1._0
             Antecedentes.Sort();
 
             
-            algoritmoEncAdelante(Antecedentes, ConclusionesINT, ConclusionesFIN);
+            algoritmoEncAdelante(Antecedentes, ConclusionesINT, ConclusionesFIN,0);
             
         }
-        public void algoritmoEncAdelante(List<int> Antecedentes, List<int> ConclusionesINT, List<int> ConclusionesFIN)
+        public void algoritmoEncAdelante(List<int> Antecedentes, List<int> ConclusionesINT, List<int> ConclusionesFIN, int bandera)
         {
             #region Prepara Listas y Variables
             //ClonaListas
@@ -301,6 +301,7 @@ namespace Sistema_Experto1._0
                 //Ciclara el tamaño de la listaPreguntar
                 for (int ixx = 0; ixx < exx; ixx++)
                 {
+                    int banderaza = 0;
                     /// Asigna valor del atomo segun Usuario conteste
                     if (MessageBox.Show(    "¿" + buscarAtomo(Convert.ToInt16(ListaPreguntar[ixx])) +"?",
                                             "Importante Pregunta", MessageBoxButtons.YesNo) == DialogResult.Yes)
@@ -310,6 +311,28 @@ namespace Sistema_Experto1._0
                     //Manda Correr Algoritmo y si dispara algo manda el numero del atomo disparado
                     disparado = modificarReglas(ListaPreguntar[ixx], atomoVALUE);
                     //Si no disparo nada continua con el siguiente item en ListaPreguntar
+                    for (int z = 0; z < listRules.Count(); z++)
+                    {
+                        if (bandera == 1)
+                        {
+                            if (ConclusionesFIN[0] == Convert.ToInt16(listRules[z].Conclusion))
+                            {
+                                if (listRulesClonNum[z].Conclusion == -2)
+                                {
+                                    MessageBox.Show("ya valio verga");
+                                    banderaza = 1;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (banderaza == 1)
+                    {
+                        terminado = 1;
+                        break;
+                        
+                    }
+                    
                     while (disparado != "")
                     {
                         //Si dispara algo revisa si es Conclusion Final
@@ -550,6 +573,7 @@ namespace Sistema_Experto1._0
             }
             sqlite_conn.Close();
         }
+
         public string modificarReglas(int antecedente, int atomoValor)
         {
             //Se manda el atomo a valorar y se manda valor dado por el usuario
@@ -596,10 +620,12 @@ namespace Sistema_Experto1._0
                                 atomoValor1 = 1;
                                 break;
                             }
+
                         }
                     }
                     
                 }
+
                 if (Disparado != "")
                     break;
 
@@ -800,6 +826,8 @@ namespace Sistema_Experto1._0
             List<int> atomosInRule = new List<int>();
             List<int> signosInRule = new List<int>();
             List<int> listaReglasTocadas = new List<int>();
+            List<ReglaNormNum> listaReglasNumericas = new List<ReglaNormNum>();
+            List<string> signosInRulex = new List<string>();
 
             listaPorPreguntar.Add(new int[] { atomo, 1 });
             listaPorPreguntar.Add(new int[] { atomo, -1 });
@@ -869,15 +897,60 @@ namespace Sistema_Experto1._0
             #endregion
             listaPorPreguntar.Reverse();
             int atomoVALUE = 0;
-            foreach(int[] atomoPregunta in listaPorPreguntar)
+            
+            foreach(ReglaNorm Reglanorm in listRulesNorm)
             {
-            StringBuilder Pregunta = new StringBuilder();
-            Pregunta.Append((atomoPregunta[1] == -1) ? "No " : "Si ");
-            Pregunta.Append(buscarAtomo(atomoPregunta[0]));
-            if (MessageBox.Show("¿" + Pregunta.ToString() + "?",
-                                            "Importante Pregunta", MessageBoxButtons.YesNo) == DialogResult.Yes)
-            { atomoVALUE = 1; }
-            else { atomoVALUE = -1; }
+                signosInRulex = Reglanorm.Negados.Split(',').ToList();
+
+                List<int> banderas = new List<int>();
+                foreach (string a in signosInRulex)
+                { banderas.Add(0); }
+                    listaReglasNumericas.Add(new ReglaNormNum(Reglanorm.IdRegla, banderas));
+            }
+
+
+            List<int> preguntados = new List<int>();
+            
+            foreach (int[] atomoPregunta in listaPorPreguntar)
+            {
+                int banderilla = 0;
+                foreach (int p in preguntados)
+                {
+                    if(p==atomoPregunta[0])
+                    {
+                        banderilla = 1;
+                    }
+                }
+                if (banderilla != 1)
+                {
+                    preguntados.Add(atomoPregunta[0]);
+                    if (MessageBox.Show("¿" + buscarAtomo(atomoPregunta[0]) + "?",
+                                                    "Importante Pregunta", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    { atomoVALUE = 1; }
+                    else { atomoVALUE = -1; }
+
+                    for (int i = 0; i < listaReglasNumericas.Count(); i++)
+                    {
+                        atomosInRule.Clear();
+                        atomosInRule = listRulesNorm[i].Reglax.Split('v').Select(Int32.Parse).ToList();
+                        signosInRule = listRulesNorm[i].Negados.Split(',').Select(Int32.Parse).ToList();
+                        for (int ix = 0; ix < atomosInRule.Count(); ix++)
+                        {
+                            if (atomoPregunta[0] == atomosInRule[ix])
+                            {
+                                if (signosInRule[ix] == 1)
+                                {
+                                    atomoVALUE = atomoVALUE * 1;
+                                }
+                                else
+                                {
+                                    atomoVALUE = atomoVALUE * -1;
+                                }
+                                listaReglasNumericas[i].Reglax[ix] = atomoVALUE;
+                            }
+                        }
+                    }
+                }
             }
 
         }
