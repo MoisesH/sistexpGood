@@ -70,7 +70,7 @@ namespace Sistema_Experto1._0
             NEWAntecedentes.Sort();
             NEWConclusionesINT.Sort();
             NEWConclusionesFIN.Sort();
-            formato.algoritmoEncAdelante(NEWAntecedentes, NEWConclusionesINT, NEWConclusionesFIN);
+            formato.algoritmoEncAdelante(NEWAntecedentes, NEWConclusionesINT, NEWConclusionesFIN,1);
             this.Close();
         }
         private void buscarListas(int v)

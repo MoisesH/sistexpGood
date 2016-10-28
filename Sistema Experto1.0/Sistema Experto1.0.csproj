@@ -58,6 +58,12 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormObjetivos.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormObjetivos.Designer.cs">
+      <DependentUpon>FormObjetivos.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormPatras.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -69,8 +75,13 @@
     <Compile Include="Regla.cs" />
     <Compile Include="ReglaClon.cs" />
     <Compile Include="ReglaClonNum.cs" />
+    <Compile Include="ReglaNorm.cs" />
+    <Compile Include="ReglaNormNum.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormObjetivos.resx">
+      <DependentUpon>FormObjetivos.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormPatras.resx">
       <DependentUpon>FormPatras.cs</DependentUpon>
